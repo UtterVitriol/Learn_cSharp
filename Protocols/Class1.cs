@@ -9,7 +9,7 @@
         }
         public struct Get
         {
-            byte[] = new byte[Int16.MaxValue];
+            public 
         }
 
         public struct Put
