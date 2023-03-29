@@ -17,7 +17,6 @@ namespace Server
         {
             try
             {
-                //IpAddr = System.Net.IPAddress.Parse("127.0.0.1");
                 IpAddr = GetLocalIPv4(NetworkInterfaceType.Ethernet);
 
                 if (IpAddr == null)
@@ -91,7 +90,6 @@ namespace Server
 
                     Socket clientSocket = Listener.Accept();
 
-                    // Data buffer
                     byte[] bytes = new Byte[1024];
                     string? data = null;
 
@@ -122,8 +120,6 @@ namespace Server
                 Console.WriteLine(e.ToString());
             }
         }
-
-        // Main Method
         static void Main(string[] args)
         {
             StartSever();

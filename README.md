@@ -16,8 +16,9 @@
 
 # Notes
 
-#### TODO
-* Need to understand classes better
-* Figure out how to serialize (Read Apollo Source)
-* Async IO
-* Threading
+#### Argument Parsing
+[CommandLine](https://www.nuget.org/packages/System.CommandLine)
+
+[CommandLine NamingConventionBinder](https://www.nuget.org/packages/System.CommandLine.NamingConventionBinder)
+
+[JSON serialization](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-8-0)
