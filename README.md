@@ -22,3 +22,5 @@
 [CommandLine NamingConventionBinder](https://www.nuget.org/packages/System.CommandLine.NamingConventionBinder)
 
 [JSON serialization](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-8-0)
+
+	What is an interface?
