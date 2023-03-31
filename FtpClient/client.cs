@@ -1,5 +1,4 @@
-﻿// A C# program for Client
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,11 +15,21 @@ using FileTransfer.FileLib;
 
 namespace ClientApplication
 {
-        
+    /// <summary>
+    /// 
+    /// </summary>
     class Program
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static TcpClient? client;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         static int Main(string[] args)
         {
 
@@ -78,7 +87,6 @@ namespace ClientApplication
 
             while ((i = stream.Read(bytes, i, bytes.Length)) != 0)
             {
-                // Translate data bytes to a ASCII string.
                 data += System.Text.Encoding.ASCII.GetString(bytes, 0, i);
 
                 int lBracket = data.IndexOf("{");
