@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using FileTransfer.FileLib;
 using FileTransfer.Serializer;
@@ -16,7 +17,7 @@ namespace Server
         public static TcpListener? server;
         static void Main(string[] args)
         {
-            server = new TcpListener(IPAddress.Parse("0.0.0.0"), 23669);
+            server = new TcpListener(IPAddress.Parse("192.168.1.175"), 23669);
 
             Console.WriteLine($"Local: {server.LocalEndpoint}");
 
@@ -79,6 +80,7 @@ namespace Server
                     }
 
                     string d = new string(data.Take(rBracket + 1).ToArray());
+                    Console.WriteLine($"Last: {d[d.Length - 1]}");
                     bytesProcessed = 0; 
                     MessageChunk chunk = ser.Deserialize<MessageChunk>(d);
                     data = new string(data.Skip(rBracket + 1).ToArray());
@@ -123,6 +125,7 @@ namespace Server
             foreach (var chunk in chunks)
             {
                 byte[] mBytes = Encoding.UTF8.GetBytes(ser.Serialize(chunk));
+                Console.WriteLine($"Chunk {chunk.ChunkNumber} - Total {chunk.TotalChunks}");
                 stream.Write(mBytes, 0, mBytes.Length);
             }
         }
@@ -161,13 +164,7 @@ namespace Server
 
         public static int PutFile(PutMessage msg, TcpClient client)
         {
-
-
-
-            //Console.WriteLine($"{msg.Type} - {msg.Location} - {msg.Destination}");
-
-
-            FileLib.WriteFile(msg.Location, Encoding.UTF8.GetBytes(msg.Destination), 0);
+            FileLib.WriteFile(msg.Location, Convert.FromBase64String(msg.Destination), 0);
 
             msg = new PutMessage()
             {

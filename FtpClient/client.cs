@@ -15,21 +15,10 @@ using FileTransfer.FileLib;
 
 namespace ClientApplication
 {
-    /// <summary>
-    /// 
-    /// </summary>
     class Program
     {
-        /// <summary>
-        /// 
-        /// </summary>
         public static TcpClient? client;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         static int Main(string[] args)
         {
 
@@ -74,61 +63,67 @@ namespace ClientApplication
 
         public static FileTransferMessage RecvMsg()
         {
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[4096];
             string data = "";
+            bool done = false;
 
             NetworkStream stream = client!.GetStream();
 
             int i = 0;
+            int bytesProcessed = 0;
 
             string message = "";
             MessageType type = MessageType.Unknown;
             var ser = new MyJsonSerializer();
 
-            while ((i = stream.Read(bytes, i, bytes.Length)) != 0)
+            while ((i = stream.Read(bytes, 0, 4096)) != 0)
             {
-                data += System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                data += System.Text.Encoding.UTF8.GetString(bytes);
 
-                int lBracket = data.IndexOf("{");
-                int rBracket = data.IndexOf("}");
-
-                if (lBracket != -1)
+                while (bytesProcessed < data.Length)
                 {
-                    Console.WriteLine("No lbracket");
+
+                    Array.Clear(bytes, 0, bytes.Length);
+
+                    int lBracket = data.IndexOf("{");
+                    int rBracket = data.IndexOf("}");
+
+                    if (rBracket == -1)
+                    {
+                        bytesProcessed += data.Length;
+                        continue;
+                    }
+
+                    string d = new string(data.Take(rBracket + 1).ToArray());
+                    bytesProcessed = 0;
+                    MessageChunk chunk = ser.Deserialize<MessageChunk>(d);
+                    data = new string(data.Skip(rBracket + 1).ToArray());
+                    message += Encoding.UTF8.GetString(Convert.FromBase64String(chunk.Data));
+
+                    Console.WriteLine($"Chunk {chunk.ChunkNumber} - Total {chunk.TotalChunks}");
+
+                    if (chunk.ChunkNumber == chunk.TotalChunks)
+                    {
+                        type = chunk.Type;
+                        done = true;
+                        break;
+                    }
+                    else if (chunk.ChunkNumber > chunk.TotalChunks)
+                    {
+                        throw new Exception("RecvMsg Error");
+                    }
+
+
+
                 }
-                else
+
+                bytesProcessed = 0;
+
+                if (done)
                 {
-                    Console.WriteLine("lBracket found");
-                }
-
-                if (rBracket > 0)
-                {
-                    Console.WriteLine("rBracket found");
-
-                }
-                else
-                {
-                    continue;
-                }
-
-
-                MessageChunk chunk = ser.Deserialize<MessageChunk>(data);
-
-                message += Encoding.UTF8.GetString(Convert.FromBase64String(chunk.Data));
-
-                if (chunk.ChunkNumber == chunk.TotalChunks)
-                {
-                    Console.WriteLine(message);
-                    type = chunk.Type;
                     break;
                 }
-                else
-                {
-                    throw new Exception("RecvMsg Error");
-                }
-
             }
-
 
             byte[] bMessage = Encoding.UTF8.GetBytes(message);
             return ser.DeserializeMessage(bMessage, type);
@@ -202,7 +197,7 @@ namespace ClientApplication
                 {
                     Type = MessageType.Put,
                     Location = destination,
-                    Destination = Encoding.UTF8.GetString(buffer),
+                    Destination = Convert.ToBase64String(buffer),
                 };
 
                 SendMsg(msg);
