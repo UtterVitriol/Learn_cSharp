@@ -7,20 +7,18 @@
 
 [Mythic C2 Profiles](https://github.com/MythicC2Profiles)
 
-## References (http agents?)
+## References 
 
 [Apollo](https://github.com/MythicAgents/Apollo/tree/2.2.1)
 
 [Athena](https://github.com/MythicAgents/athena)
 
+[JSON serialization](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-8-0)
 
-# Notes
 
-#### Argument Parsing
+## Dependencies
 [CommandLine](https://www.nuget.org/packages/System.CommandLine)
 
 [CommandLine NamingConventionBinder](https://www.nuget.org/packages/System.CommandLine.NamingConventionBinder)
 
-[JSON serialization](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-8-0)
 
-	What is an interface?
